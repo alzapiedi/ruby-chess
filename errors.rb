@@ -9,7 +9,7 @@ class OutOfBoundsError < StandardError
     "That position is out of bounds"
   end
 end
-
+ 
 class IllegalMoveError < StandardError
   def message
     "That piece can't move there"

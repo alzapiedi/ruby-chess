@@ -9,7 +9,7 @@ class Game
     @board.populate
     @turn = :white
   end
-
+ 
   def choose_piece
     start = nil
     until start

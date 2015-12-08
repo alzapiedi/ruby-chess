@@ -10,7 +10,7 @@ module Cursorable
     "\e[D" => :left,
     "\u0003" => :ctrl_c,
   }
-
+ 
   MOVES = {
     left: [0, -1],
     right: [0, 1],
@@ -56,6 +56,6 @@ module Cursorable
   def update_pos(diff)
     new_pos = [@cursor_pos[0] + diff[0], @cursor_pos[1] + diff[1]]
     @cursor_pos = new_pos if @board.in_bounds?(new_pos)
-  
+
   end
 end

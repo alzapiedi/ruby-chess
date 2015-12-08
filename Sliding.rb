@@ -15,5 +15,5 @@ module Sliding
     moves
   end
 
-
+ 
 end

@@ -8,7 +8,7 @@ class Display
     @board = board
     @cursor_pos = [6, 4]
   end
-
+ 
   def build_grid
     @board.grid.map.with_index do |row, i|
       build_row(row, i)
