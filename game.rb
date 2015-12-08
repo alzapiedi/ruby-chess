@@ -65,20 +65,15 @@ class Game
       play_turn
       toggle_color
     end
+    toggle_color
+    @display.render
+    puts "Checkmate! #{@turn.to_s.capitalize} wins"
   end
 
   def toggle_color
     @turn = (@turn == :white ? :black : :white)
   end
 end
-
-
-
-
-
-
-
-
 
 if __FILE__ == $PROGRAM_NAME
 

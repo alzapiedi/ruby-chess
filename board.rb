@@ -11,27 +11,22 @@ attr_reader :grid
   end
 
   def checkmate?(color)
-
+    pieces(color).each do |piece|
+      return false if piece.moves.any? { |move| !piece.move_into_check?(move) }
+    end
+    return true
   end
 
   def find_king(color)
-    grid.each_with_index do |row, row_i|
-      row.each_with_index do |piece, col_i|
-        next if piece.nil?
-        if piece.is_a?(King) && piece.color == color
-          return [row_i, col_i]
-        end
-      end
+    pieces.each do |piece|
+      return piece.pos if piece.is_a?(King) && piece.color == color
     end
   end
 
   def in_check?(color)
     king_pos = find_king(color)
-    grid.each do |row|
-      row.each do |piece|
-        next if piece.nil?
-        return true if piece.moves.include?(king_pos) && piece.color != color
-      end
+    pieces.each do |piece|
+      return true if piece.moves.include?(king_pos) && piece.color != color
     end
     return false
   end
@@ -43,6 +38,14 @@ attr_reader :grid
 
   def occupied?(pos)
     !self[pos].nil?
+  end
+
+  def pieces(color = nil)
+    if color
+      @grid.flatten.compact.select { |piece| piece.color == color }
+    else
+      @grid.flatten.compact
+    end
   end
 
   def color?(pos)
@@ -67,28 +70,13 @@ attr_reader :grid
   end
 
   def deep_dup
-    new_grid = []
-    @grid.each do |row|
-      col = []
-      row.each do |piece|
-
-        col << (piece.nil? ? nil : piece.dup)
-      end
-      new_grid << col
+    test_board = Board.new
+    pieces.each do |piece|
+      piece.class.new(piece.color, test_board, piece.pos)
     end
-    Board.new(new_grid)
+
+    test_board
   end
-
-
-
-
-
-
-
-
-
-
-
 
   def populate
     Rook.new(:black, self, [0, 0])
