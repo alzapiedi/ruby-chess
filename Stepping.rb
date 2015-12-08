@@ -1,12 +1,15 @@
 module Stepping
 
-def moves
-  x, y = @pos
-  test_board = @board.deep_dup
-  deltas = self.class::DELTAS
-  moves = []
-  deltas.each { |delta| moves << [delta[0] + x, delta[1] + y] }
-  moves.select { |move| @board.in_bounds?(move) && !move_into_check?(test_board, move) && (!@board.occupied?(move) || @board[move].color != self.color) }
-end
+  def moves
+    moves = []
+    move_dirs.each do |delta|
+      d_x, d_y = delta
+      test_position = [@pos[0] + d_x, @pos[1] + d_y]
+      next unless @board.in_bounds?(test_position)
+      moves << test_position unless @board.occupied?(test_position) && @board[test_position].color == self.color
+    end
+    moves
+  end
+
 
 end

@@ -10,15 +10,37 @@ class Game
     @turn = :white
   end
 
-  def play_turn
-    begin
-      start = nil
-      until start
-        @display.render
-        start = @display.get_input
-      end
+  def choose_piece
+    start = nil
+    until start
+      @display.render
+      start = @display.get_input
+    end
+
+    if @board[start].nil?
       raise EmptySpaceError if @board[start].nil?
+    elsif @board[start].color != @turn
       raise OtherColorError if @board[start].color != @turn
+    else
+      start
+    end
+  end
+
+  def choose_move(start)
+    end_pos = nil
+    until end_pos
+      @display.render
+      end_pos = @display.get_input
+    end
+    raise IllegalMoveError unless @board[start].moves.include?(end_pos)
+    raise InCheckError if @board[start].move_into_check?(end_pos)
+    end_pos
+  end
+
+  def play_turn
+    start = choose_piece
+    end_pos = choose_move(start)
+    @board.move(start, end_pos)
     rescue EmptySpaceError => err
       puts err.message
       sleep(1)
@@ -27,21 +49,14 @@ class Game
       puts err.message
       sleep(1)
       retry
-    end
-    begin
-      end_pos = nil
-      until end_pos
-        @display.render
-        end_pos = @display.get_input
-      end
-      raise IllegalMoveError unless @board[start].moves.include?(end_pos)
     rescue IllegalMoveError => err
       puts err.message
       sleep(1)
       retry
-    end
-
-    @board.move(start,end_pos)
+    rescue InCheckError => err
+      puts err.message
+      sleep(1)
+      retry
     @display.render
   end
 
@@ -56,6 +71,10 @@ class Game
     @turn = (@turn == :white ? :black : :white)
   end
 end
+
+
+
+
 
 
 

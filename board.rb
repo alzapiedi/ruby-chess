@@ -30,7 +30,7 @@ attr_reader :grid
     grid.each do |row|
       row.each do |piece|
         next if piece.nil?
-        return true if piece.moves.include?(king_pos)
+        return true if piece.moves.include?(king_pos) && piece.color != color
       end
     end
     return false
@@ -71,7 +71,7 @@ attr_reader :grid
     @grid.each do |row|
       col = []
       row.each do |piece|
-        byebug
+
         col << (piece.nil? ? nil : piece.dup)
       end
       new_grid << col

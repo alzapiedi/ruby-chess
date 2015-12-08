@@ -1,8 +1,11 @@
 require_relative 'sliding'
 require_relative 'stepping'
+require 'byebug'
 class Piece
   attr_reader :color, :color_option, :board
   attr_accessor :pos
+  CARDINALS = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+  DIAGONALS = [[-1, -1], [-1, 1], [1, 1], [1, -1]]
   def initialize(color, board, pos)
     @color = color
     @board = board
@@ -11,11 +14,16 @@ class Piece
     @color_option = (@color == :white ? :green : :light_blue)
   end
 
+  def inspect
+    to_s
+  end
 
-  def move_into_check?(test_board, test_pos)
+  def move_into_check?(test_pos)
+    test_board = @board.deep_dup
     test_board.move(@pos, test_pos)
     test_board.in_check?(color)
   end
+
 
 end
 
@@ -25,20 +33,25 @@ class Knight < Piece
   def to_s
     " H "
   end
+  def move_dirs
+    DELTAS
+  end
 end
 
 class King < Piece
   include Stepping
-  DELTAS = [[-1, -1], [-1, 0], [-1, 1], [0, 1], [0, -1], [1, -1], [1, 0], [1, 1]]
   def to_s
     " K "
+  end
+  def move_dirs
+    CARDINALS + DIAGONALS
   end
 end
 
 class Bishop < Piece
   include Sliding
   def move_dirs
-    { diag: true, horiz: false }
+    DIAGONALS
   end
   def to_s
     " B "
@@ -48,7 +61,7 @@ end
 class Rook < Piece
   include Sliding
   def move_dirs
-    { diag: false, horiz: true }
+    CARDINALS
   end
   def to_s
     " R "
@@ -58,7 +71,7 @@ end
 class Queen < Piece
   include Sliding
   def move_dirs
-    { diag: true, horiz: true }
+    CARDINALS + DIAGONALS
   end
   def to_s
     " Q "

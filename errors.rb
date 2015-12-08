@@ -21,3 +21,9 @@ class OtherColorError < StandardError
     "You don't have control of that color piece"
   end
 end
+
+class InCheckError < StandardError
+  def message
+    "You can't make a move that puts you in check"
+  end
+end
