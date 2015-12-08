@@ -8,6 +8,7 @@ class Piece
   DIAGONALS = [[-1, -1], [-1, 1], [1, 1], [1, -1]]
   def initialize(color, board, pos)
     @color = color
+    @enemy_color = (@color == :white ? :black : :white)
     @board = board
     @pos = pos
     @board[@pos] = self
@@ -30,7 +31,7 @@ class Knight < Piece
   DELTAS = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]
 
   def to_s
-    " H "
+    " ♞ "
   end
 
   def move_dirs
@@ -42,7 +43,7 @@ class King < Piece
   include Stepping
 
   def to_s
-    " K "
+    " ♚ "
   end
 
   def move_dirs
@@ -58,7 +59,7 @@ class Bishop < Piece
   end
 
   def to_s
-    " B "
+    " ♝ "
   end
 end
 
@@ -70,7 +71,7 @@ class Rook < Piece
   end
 
   def to_s
-    " R "
+    " ♜ "
   end
 end
 
@@ -82,7 +83,7 @@ class Queen < Piece
   end
 
   def to_s
-    " Q "
+    " ♛ "
   end
 end
 
@@ -90,7 +91,31 @@ class Pawn < Piece
   include Stepping
   attr_accessor :passant
   def to_s
-    " P "
+    " ♟ "
+  end
+
+  def passant_set
+    @passant = pawn_left? || pawn_right?
+  end
+
+  def pawn_left?
+    left = [@pos[0], @pos[1] - 1]
+    @board.pieces(@enemy_color).any? { |piece| piece.is_a?(Pawn) && piece.pos == left }
+  end
+
+  def pawn_right?
+    right = [@pos[0], @pos[1] + 1]
+    @board.pieces(@enemy_color).any? { |piece| piece.is_a?(Pawn) && piece.pos == right }
+  end
+
+  def passant_left?
+    left = [@pos[0], @pos[1] - 1]
+    return pawn_left? && @board[left].passant
+  end
+
+  def passant_right?
+    right = [@pos[0], @pos[1] + 1]
+    return pawn_right? && @board[right].passant
   end
 
   def move_dirs
@@ -106,6 +131,8 @@ class Pawn < Piece
         test_pos = [@pos[0] + d_x, @pos[1] + d_y]
         deltas << delta if @board.pieces(:black).any? { |piece| piece.pos == test_pos}
       end
+      deltas << [-1, -1] if passant_left?
+      deltas << [-1, 1] if passant_right?
       deltas
     when :black
       deltas = []
@@ -118,6 +145,8 @@ class Pawn < Piece
         test_pos = [@pos[0] + d_x, @pos[1] + d_y]
         deltas << delta if @board.pieces(:white).any? { |piece| piece.pos == test_pos}
       end
+      deltas << [1, -1] if passant_left?
+      deltas << [1, 1] if passant_right?
       deltas
     end
   end

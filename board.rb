@@ -57,14 +57,29 @@ attr_accessor :current_piece
   def move(start, end_pos)
     piece = self[start]
     piece.pos = end_pos
+    if piece.is_a?(Pawn) && (end_pos[1] - start[1]).abs == 1 && self[end_pos].nil?
+      case piece.color
+      when :white
+        self[[end_pos[0] + 1, end_pos[1]]] = nil
+      when :black
+        self[[end_pos[0] - 1, end_pos[1]]] = nil
+      end
+    end
     self[end_pos] = piece
     self[start] = nil
+    if piece.is_a?(Pawn) && (end_pos[0]-start[0]).abs == 2
+      piece.passant_set
+    end
+    other_color = (piece.color == :white ? :black : :white)
+    pieces(other_color).select { |piece| piece.is_a?(Pawn) }.each { |pawn| pawn.passant = false }
+    nil
   end
 
   def [](arr)
     x, y = arr
     @grid[x][y]
   end
+
   def []=(arr, piece)
     x = arr[0]
     y = arr[1]
