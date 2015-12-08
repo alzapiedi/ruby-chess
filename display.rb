@@ -38,6 +38,7 @@ class Display
   end
 
   def render
+    system("clear")
     puts "Arrow keys to move, space to confirm selection."
     build_grid.each { |row| puts row.join }
   end

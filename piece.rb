@@ -11,6 +11,12 @@ class Piece
     @color_option = (@color == :white ? :green : :light_blue)
   end
 
+
+  def move_into_check?(test_board, test_pos)
+    test_board.move(@pos, test_pos)
+    test_board.in_check?(color)
+  end
+
 end
 
 class Knight < Piece

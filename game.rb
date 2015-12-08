@@ -1,5 +1,6 @@
 require_relative "board"
 require_relative "display"
+require 'byebug'
 
 class Game
   def initialize
@@ -9,21 +10,51 @@ class Game
     @turn = :white
   end
 
-  def play_turn(color)
-    start = nil
-    end_pos = nil
-    until start
+  def play_turn
+    begin
+      start = nil
+      until start
         @display.render
         start = @display.get_input
+      end
+      raise EmptySpaceError if @board[start].nil?
+      raise OtherColorError if @board[start].color != @turn
+    rescue EmptySpaceError => err
+      puts err.message
+      sleep(1)
+      retry
+    rescue OtherColorError => err
+      puts err.message
+      sleep(1)
+      retry
     end
-    until end_pos
-      @display.render
-      end_pos = @display.get_input
+    begin
+      end_pos = nil
+      until end_pos
+        @display.render
+        end_pos = @display.get_input
+      end
+      raise IllegalMoveError unless @board[start].moves.include?(end_pos)
+    rescue IllegalMoveError => err
+      puts err.message
+      sleep(1)
+      retry
     end
+
     @board.move(start,end_pos)
     @display.render
   end
 
+  def play
+    until @board.checkmate?(@turn)
+      play_turn
+      toggle_color
+    end
+  end
+
+  def toggle_color
+    @turn = (@turn == :white ? :black : :white)
+  end
 end
 
 
@@ -32,5 +63,6 @@ end
 
 if __FILE__ == $PROGRAM_NAME
 
-  Game.new.play_turn(:white)
+  a = Game.new
+  a.play
 end

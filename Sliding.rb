@@ -5,39 +5,71 @@ MOVES = { diag: [[1, 1], [-1, -1], [-1, 1], [1, -1], [2, 2], [-2, -2], [-2, 2], 
 
   def moves
     x, y = @pos
+    test_board = @board.deep_dup
     dir_hash = self.move_dirs.select { |_, val| val }
     moves = []
     dir_hash.each do |dir, _|
       MOVES[dir].each { |delta| moves << [delta[0] + x, delta[1] + y] }
     end
-    moves.select { |move| @board.in_bounds?(move) }
-  end
-
-  def valid_moves
-
+    moves.select do |move|
+      (@board.in_bounds?(move) && !path_blocked?(move) && !move_into_check?(test_board, move) && (!@board.occupied?(move) || @board[move].color != self.color))
+    end
   end
 
   def path_blocked?(end_pos)
-    s_x, s_y = @pos
-    d_x, d_y = end_pos
+    start_r, start_c = @pos
+    end_r, end_c = end_pos
     path = []
-    case [d_x <=> s_x, d_y <=> s_y]
+    case [end_r <=> start_r, end_c <=> start_c]
     when [-1, 1]
-      px = d_x + 1
-      py = d_y - 1
-      (s_x-d_x).times do
-        path << [px, py]
-        px += 1
-        py -= 1
+      dr = end_r + 1
+      dc = end_c - 1
+      (start_r - end_r - 1).times do
+        path << [dr, dc]
+        dr += 1
+        dc -= 1
       end
-      p path
-
+    when [-1, -1]
+      dr = end_r + 1
+      dc = end_c + 1
+      (start_r - end_r - 1).times do
+        path << [dr, dc]
+        dr += 1
+        dc += 1
       end
-
+    when [1, -1]
+      dr = end_r - 1
+      dc = end_c + 1
+      (end_r - start_r - 1).times do
+        path << [dr, dc]
+        dr -= 1
+        dc += 1
+      end
+    when [1, 1]
+      dr = end_r - 1
+      dc = end_c - 1
+      (end_r - start_r - 1).times do
+        path << [dr, dc]
+        dr -= 1
+        dc -= 1
+      end
+    when [1, 0]
+      ((start_r + 1).upto(end_r - 1)).each do |r|
+        path << [r, start_c]
+      end
+    when [-1, 0]
+      ((end_r - 1).downto(start_r + 1)).each do |r|
+        path << [r, start_c]
+      end
+    when [0, 1]
+      ((start_c + 1).upto(end_c - 1)).each do |c|
+        path << [start_r, c]
+      end
+    when [0, -1]
+      ((end_c - 1).downto(start_c + 1)).each do |c|
+        path << [start_r, c]
+      end
+      end
       path.any? { |pos| @board.occupied?(pos) }
-
-
   end
-
-
 end
