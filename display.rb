@@ -6,7 +6,7 @@ class Display
 
   def initialize(board)
     @board = board
-    @cursor_pos = [0, 0]
+    @cursor_pos = [6, 4]
   end
 
   def build_grid
@@ -29,6 +29,8 @@ class Display
   def colors_for(i, j)
     if [i, j] == @cursor_pos
       bg = :light_red
+    elsif !@board.current_piece.nil? && @board.current_piece.moves.include?([i, j]) && !@board.current_piece.move_into_check?([i, j])
+      bg = ((i + j).odd?) ? :green : :light_green
     elsif (i + j).odd?
       bg = :black
     else

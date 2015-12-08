@@ -6,8 +6,10 @@ require 'byebug'
 class Board
 BOARD_SIZE = 8
 attr_reader :grid
+attr_accessor :current_piece
   def initialize(grid = Array.new(BOARD_SIZE) { Array.new(BOARD_SIZE) })
     @grid = grid
+    @current_piece = nil
   end
 
   def checkmate?(color)
@@ -87,14 +89,14 @@ attr_reader :grid
     Bishop.new(:black, self, [0,5])
     Queen.new(:black, self, [0,3])
     King.new(:black, self, [0,4])
-    # Pawn.new(:black, self, [1,0])
-    # Pawn.new(:black, self, [1,1])
-    # Pawn.new(:black, self, [1,2])
-    # Pawn.new(:black, self, [1,3])
-    # Pawn.new(:black, self, [1,4])
-    # Pawn.new(:black, self, [1,5])
-    # Pawn.new(:black, self, [1,6])
-    # Pawn.new(:black, self, [1,7])
+    Pawn.new(:black, self, [1,0])
+    Pawn.new(:black, self, [1,1])
+    Pawn.new(:black, self, [1,2])
+    Pawn.new(:black, self, [1,3])
+    Pawn.new(:black, self, [1,4])
+    Pawn.new(:black, self, [1,5])
+    Pawn.new(:black, self, [1,6])
+    Pawn.new(:black, self, [1,7])
     Rook.new(:white, self, [7,0])
     Rook.new(:white, self, [7,7])
     Knight.new(:white, self, [7,6])
@@ -103,13 +105,13 @@ attr_reader :grid
     Bishop.new(:white, self, [7,2])
     Queen.new(:white, self, [7,3])
     King.new(:white, self, [7,4])
-    # Pawn.new(:white, self, [6,0])
-    # Pawn.new(:white, self, [6,1])
-    # Pawn.new(:white, self, [6,2])
-    # Pawn.new(:white, self, [6,3])
-    # Pawn.new(:white, self, [6,4])
-    # Pawn.new(:white, self, [6,5])
-    # Pawn.new(:white, self, [6,6])
-    # Pawn.new(:white, self, [6,7])
+    Pawn.new(:white, self, [6,0])
+    Pawn.new(:white, self, [6,1])
+    Pawn.new(:white, self, [6,2])
+    Pawn.new(:white, self, [6,3])
+    Pawn.new(:white, self, [6,4])
+    Pawn.new(:white, self, [6,5])
+    Pawn.new(:white, self, [6,6])
+    Pawn.new(:white, self, [6,7])
   end
 end

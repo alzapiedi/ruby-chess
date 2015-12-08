@@ -88,9 +88,38 @@ end
 
 class Pawn < Piece
   include Stepping
-
+  attr_accessor :passant
   def to_s
     " P "
+  end
+
+  def move_dirs
+    case color
+    when :white
+      deltas = []
+      deltas << [-2, 0] if @pos[0] == 6
+      one_step = [@pos[0] - 1, @pos[1]]
+      deltas << [-1, 0] unless @board.pieces.any? { |piece| piece.pos == one_step }
+      test_deltas = [[-1, -1], [-1, 1]]
+      test_deltas.each do |delta|
+        d_x, d_y = delta
+        test_pos = [@pos[0] + d_x, @pos[1] + d_y]
+        deltas << delta if @board.pieces(:black).any? { |piece| piece.pos == test_pos}
+      end
+      deltas
+    when :black
+      deltas = []
+      deltas << [2, 0] if @pos[0] == 1
+      one_step = [@pos[0] + 1, @pos[1]]
+      deltas << [1, 0] unless @board.pieces.any? { |piece| piece.pos == one_step }
+      test_deltas = [[1, -1], [1, 1]]
+      test_deltas.each do |delta|
+        d_x, d_y = delta
+        test_pos = [@pos[0] + d_x, @pos[1] + d_y]
+        deltas << delta if @board.pieces(:white).any? { |piece| piece.pos == test_pos}
+      end
+      deltas
+    end
   end
 
 end

@@ -16,12 +16,12 @@ class Game
       @display.render
       start = @display.get_input
     end
-
     if @board[start].nil?
       raise EmptySpaceError if @board[start].nil?
     elsif @board[start].color != @turn
       raise OtherColorError if @board[start].color != @turn
     else
+      @board.current_piece = @board[start]
       start
     end
   end
@@ -32,6 +32,7 @@ class Game
       @display.render
       end_pos = @display.get_input
     end
+    @board.current_piece = nil
     raise IllegalMoveError unless @board[start].moves.include?(end_pos)
     raise InCheckError if @board[start].move_into_check?(end_pos)
     end_pos
